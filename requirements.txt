@@ -1,3 +1,4 @@
 agno
 ollama
 mcp
+mistralai
