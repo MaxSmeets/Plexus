@@ -43,7 +43,7 @@ def list_items(agent: Agent) -> str:
 
 
 # Create a Shopping List Manager Agent that maintains state
-agent = Agent(
+shopping_list_agent = Agent(
     model=MistralChat(
         id="mistral-medium-latest",
         api_key=mistral_api_key,
@@ -62,20 +62,5 @@ agent = Agent(
     show_tool_calls=True,
     add_state_in_messages=True,
     markdown=True,
+    stream=True,
 )
-
-# Example usage
-agent.print_response("Add milk, eggs, and bread to the shopping list", stream=True)
-print(f"Session state: {agent.session_state}")
-
-agent.print_response("I bought bread", stream=True)
-print(f"Session state: {agent.session_state}")
-
-agent.print_response("I need apples and oranges", stream=True)
-print(f"Session state: {agent.session_state}")
-
-agent.print_response("whats on my list?", stream=True)
-print(f"Session state: {agent.session_state}")
-
-agent.print_response("Clear everything from my list and start over with just bananas and yogurt", stream=True)
-print(f"Session state: {agent.session_state}")
