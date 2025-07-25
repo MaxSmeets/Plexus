@@ -47,6 +47,7 @@ shopping_list_agent = Agent(
     model=MistralChat(
         id="mistral-medium-latest",
         api_key=mistral_api_key,
+        temperature=0.2
     ),
     # Initialize the session state with an empty shopping list
     session_state={"shopping_list": []},
@@ -55,7 +56,8 @@ shopping_list_agent = Agent(
     instructions=dedent("""\
         Your job is to manage a shopping list.
 
-        The shopping list starts empty. You can add items, remove items by name, and list all items.
+        You can add items, remove items by name, and list all items.
+        Use the tools provided to perform these actions.
 
         Current shopping list: {shopping_list}
     """),
