@@ -28,6 +28,7 @@ class Settings(BaseSettings):
         "http://localhost:8000",  # API server
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
+        "http://127.0.0.1:5500"   # Live server for quick testing
     ]
     
     # Security

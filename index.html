@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plexus API Health Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .status-indicator {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .status-healthy {
+            background-color: #28a745;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .status-unhealthy {
+            background-color: #dc3545;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.4);
+        }
+        
+        .status-loading {
+            background-color: #ffc107;
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .status-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .details {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        
+        .details strong {
+            color: #495057;
+        }
+        
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Plexus API Health Status</h1>
+        
+        <div id="statusIndicator" class="status-indicator status-loading">
+            ⏳
+        </div>
+        
+        <div id="statusText" class="status-text">
+            Checking API status...
+        </div>
+        
+        <div id="details" class="details" style="display: none;">
+            <div><strong>Version:</strong> <span id="version">-</span></div>
+            <div><strong>Status:</strong> <span id="status">-</span></div>
+            <div><strong>Timestamp:</strong> <span id="timestamp">-</span></div>
+            <div><strong>Uptime:</strong> <span id="uptime">-</span></div>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        
+        <button id="refreshBtn" class="refresh-btn" onclick="checkHealth()">
+            Refresh Status
+        </button>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:8000/api/v0';
+        
+        async function checkHealth() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const details = document.getElementById('details');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset to loading state
+            statusIndicator.className = 'status-indicator status-loading';
+            statusIndicator.textContent = '⏳';
+            statusText.textContent = 'Checking API status...';
+            details.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // API is healthy
+                    statusIndicator.className = 'status-indicator status-healthy';
+                    statusIndicator.textContent = '✓';
+                    statusText.textContent = 'API is healthy and running!';
+                    
+                    // Show details
+                    if (data.data) {
+                        document.getElementById('version').textContent = data.data.version || '-';
+                        document.getElementById('status').textContent = data.data.status || '-';
+                        document.getElementById('timestamp').textContent = data.data.timestamp || '-';
+                        document.getElementById('uptime').textContent = data.data.uptime ? 
+                            `${Math.floor(data.data.uptime)} seconds` : '-';
+                        details.style.display = 'block';
+                    }
+                    
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                // API is unhealthy or unreachable
+                statusIndicator.className = 'status-indicator status-unhealthy';
+                statusIndicator.textContent = '✗';
+                statusText.textContent = 'API is not responding';
+                
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.style.display = 'block';
+            }
+        }
+        
+        // Auto-refresh every 30 seconds
+        function startAutoRefresh() {
+            setInterval(checkHealth, 30000);
+        }
+        
+        // Check health on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkHealth();
+            startAutoRefresh();
+        });
+    </script>
+</body>
+</html>
