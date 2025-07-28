@@ -230,3 +230,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+
+# Scratchpad to store and keep track of plan of action by coding agent
+/SCRATCHPAD.md

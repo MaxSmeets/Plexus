@@ -1,4 +1,4 @@
-from server.agents.shopping_list_agent import shopping_list_agent
+from agents.shopping_list_agent import shopping_list_agent
 
 def main():
     while True:
