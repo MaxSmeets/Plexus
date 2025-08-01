@@ -1,8 +1,8 @@
 agno
+ag-ui-protocol
 ollama
 mcp
 mistralai
-ag-ui-protocol
 
 # FastAPI and API dependencies
 fastapi>=0.104.1

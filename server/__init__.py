@@ -1,3 +1,0 @@
-"""
-Plexus Server Package
-"""
